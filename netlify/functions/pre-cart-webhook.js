@@ -84,19 +84,16 @@ const createItemFromSkeleton = p => {
 };
 
 const precartWebhookHandler = async req => {
-  const extra = { responseCode: 200, "foxy-http-method-override": "PUT" };
-
+  const extra = { responseCode: 304, "foxy-http-method-override": "PUT" };
+  console.log(req);
   // TO DO: error handling on the JSON parsing.
-  const foxyBody = JSON.parse(req);
+  const foxyBody = JSON.parse(req.body);
   console.log("foxyBody: ", foxyBody);
 
   if (!foxyBody?.cookies?.fcsid || (Array.isArray(foxyBody) && !foxyBody.length)) {
     console.log("No existing session, switching to a POST");
     extra["foxy-http-method-override"] = "POST";
   }
-
-  let item = createItemFromSkeleton(p);
-  console.log(`item: ${JSON.stringify(item)}`);
 
   return { item, extra };
 };
