@@ -95,7 +95,7 @@ const precartWebhookHandler = async req => {
     headers["foxy-http-method-override"] = "POST";
   }
 
-  return { headers, statusCode: 200 };
+  return new Response({ headers, statusCode: 200 });
 };
 
 export default async (req, context) => {
