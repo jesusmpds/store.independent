@@ -90,7 +90,7 @@ const precartWebhookHandler = async req => {
   const cart = JSON.parse(foxyReq.body);
   console.log("cart: ", cart);
 
-  if (!foxyReq?.cookies?.fcsid || (Array.isArray(foxyBody) && !foxyBody.length)) {
+  if (!foxyReq?.cookies?.fcsid) {
     console.log("No existing session, switching to a POST");
     headers["foxy-http-method-override"] = "POST";
   }
