@@ -87,7 +87,7 @@ const precartWebhookHandler = async req => {
   const extra = { responseCode: 200, "foxy-http-method-override": "PUT" };
 
   // TO DO: error handling on the JSON parsing.
-  const foxyBody = JSON.parse(req.body);
+  const foxyBody = JSON.parse(req);
   console.log("foxyBody: ", foxyBody);
 
   if (!foxyBody?.cookies?.fcsid || (Array.isArray(foxyBody) && !foxyBody.length)) {
