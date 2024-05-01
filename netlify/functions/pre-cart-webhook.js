@@ -85,7 +85,8 @@ const createItemFromSkeleton = p => {
 
 const precartWebhookHandler = async req => {
   const extra = { responseCode: 200, "foxy-http-method-override": "PUT" };
-  console.log(req.url.searchParams);
+  console.log(req);
+  console.log(req.url);
   // TO DO: error handling on the JSON parsing.
   const foxyBody = JSON.parse(req?.body?.source);
   console.log("foxyBody: ", foxyBody);
