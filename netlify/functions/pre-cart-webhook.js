@@ -86,7 +86,8 @@ const createItemFromSkeleton = p => {
 const precartWebhookHandler = async req => {
   const headers = { "foxy-http-method-override": "PUT" };
   const foxyReq = await req.json();
-  console.log(foxyReq);
+  console.log("FOXY REQUEST:", JSON.stringify(foxyReq));
+  const addedProduct = foxyReq.query;
   const cart = JSON.parse(foxyReq.body);
   console.log("cart: ", cart);
 
@@ -95,9 +96,9 @@ const precartWebhookHandler = async req => {
     headers["foxy-http-method-override"] = "POST";
   }
 
-  return new Response({ headers, statusCode: 200 });
+  return new Response({ headers, statusCode: 200, body: cart });
 };
 
-export default async (req, context) => {
+exports.handler = async (req, context) => {
   return precartWebhookHandler(req);
 };
