@@ -99,6 +99,6 @@ const precartWebhookHandler = async req => {
   return new Response({ headers, statusCode: 200, body: cart });
 };
 
-exports.handler = async (req, context) => {
+export default async (req, context) => {
   return precartWebhookHandler(req);
 };
