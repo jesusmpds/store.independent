@@ -54,7 +54,7 @@ const emptyItemBody = data => {
 
 const createItemFromSkeleton = p => {
   console.log(JSON.stringify(p));
-  const d = p.definition;
+
   const item = emptyItemBody({
     category_id: d.category_id,
     name: d.name,
@@ -83,20 +83,81 @@ const createItemFromSkeleton = p => {
   return item;
 };
 
+const calculatePrice = (regularPrice, listPrice, quantity, discountDefinition) => {
+  let price = regularPrice; // Start with regular price, fallback to list price if regular price is not provided
+
+  // Check if discount definition exists and if quantity meets the criteria
+  if (discountDefinition) {
+    // Extract discount percentages and quantities from definition
+    const matches = discountDefinition.match(/\{(.*?)\}/);
+    if (matches) {
+      const discountInfo = matches[1];
+      const discounts = discountInfo.split("|").map(entry => {
+        const [qtyRange, discountPercentage] = entry.split("-");
+        return { qtyRange, discountPercentage };
+      });
+
+      // Iterate through each discount range
+      for (const discount of discounts) {
+        const minQty = parseInt(discount.qtyRange); // Single quantity value for this range
+        if (quantity >= minQty) {
+          const discountPercentage = parseInt(discount.discountPercentage);
+          price = listPrice * (1 - discountPercentage / 100);
+        }
+      }
+    }
+  }
+
+  return price;
+};
+
 const precartWebhookHandler = async req => {
   const headers = { "foxy-http-method-override": "PUT" };
   const foxyReq = await req.json();
   console.log("FOXY REQUEST:", JSON.stringify(foxyReq));
   const addedProduct = foxyReq.query;
-  const cart = JSON.parse(foxyReq.body);
+  let cart = foxyReq?.body ? JSON.parse(foxyReq.body) : null;
   console.log("cart: ", cart);
 
+  let items = cart["fx:items"];
+  console.log("cart items: ", items);
   if (!foxyReq?.cookies?.fcsid) {
     console.log("No existing session, switching to a POST");
     headers["foxy-http-method-override"] = "POST";
   }
 
-  return new Response({ headers, statusCode: 200, body: cart });
+  const newCart = emptyCartBody({
+    attributes: [],
+    items: [],
+    coupons: [],
+  });
+
+  // Modify the price of the added product based on quantity discount
+  if (addedProduct.list_price && addedProduct.discount_quantity_percentage) {
+    const listPrice = parseFloat(addedProduct.list_price);
+    const quantity = parseInt(addedProduct.quantity);
+    const price = parseInt(addedProduct.price);
+
+    const adjustedPrice = calculatePrice(
+      price,
+      listPrice,
+      quantity,
+      addedProduct.discount_quantity_percentage
+    );
+
+    // Add a new item with adjusted price to the cart
+    const newItem = emptyItemBody({
+      // Use emptyItemBody function to create a new item
+      name: "Adjusted Product",
+      price: adjustedPrice.toFixed(2),
+      quantity: 1, // Assuming quantity is always 1 for the new item
+    });
+    newCart._embedded["fx:items"].push(newItem);
+
+    return new Response({ headers, statusCode: 200, body: JSON.stringify(newCart) });
+  }
+
+  return new Response({ headers, statusCode: 304 });
 };
 
 export default async (req, context) => {
