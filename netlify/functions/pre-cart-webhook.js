@@ -116,10 +116,10 @@ const precartWebhookHandler = async req => {
   const foxyReq = await req.json();
   console.log("FOXY REQUEST:", JSON.stringify(foxyReq));
   const addedProduct = foxyReq.query;
-  let cart = foxyReq?.body ? JSON.parse(foxyReq.body) : null;
+  let cartObject = foxyReq?.body ? JSON.parse(foxyReq.body) : null;
   console.log("cart: ", cart);
 
-  let items = cart._embedded["fx:items"];
+  let items = cartObject.cart_data._embedded["fx:items"];
   console.log("cart items: ", items);
   if (!foxyReq?.cookies?.fcsid) {
     console.log("No existing session, switching to a POST");
