@@ -119,7 +119,7 @@ const precartWebhookHandler = async req => {
   let cart = foxyReq?.body ? JSON.parse(foxyReq.body) : null;
   console.log("cart: ", cart);
 
-  let items = cart["fx:items"];
+  let items = cart._embedded["fx:items"];
   console.log("cart items: ", items);
   if (!foxyReq?.cookies?.fcsid) {
     console.log("No existing session, switching to a POST");
