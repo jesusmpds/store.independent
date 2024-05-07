@@ -53,7 +53,7 @@ const emptyItemBody = data => {
 
 const createItemFromSkeleton = d => {
   const item = emptyItemBody({
-    category_id: d.category_id,
+    category: d.category,
     name: d.name,
     price: d.price,
     quantity: d.quantity,
@@ -122,6 +122,39 @@ const precartWebhookHandler = async req => {
     headers["foxy-http-method-override"] = "POST";
   }
 
+  addedProduct.options = [];
+  addedProduct.forEach(({ name, value }) => {
+    const foxyProductOptions = [
+      category,
+      name,
+      price,
+      quantity,
+      quantity_min,
+      quantity_max,
+      weight,
+      code,
+      parent_code,
+      discount_name,
+      discount,
+      discount_quantity_percentage,
+      discount_details,
+      subscription_frequency,
+      subscription_start_date,
+      subscription_end_date,
+      shipto,
+      url,
+      image,
+      length,
+      width,
+      height,
+      expires,
+    ];
+
+    if (!foxyProductOptions.includes(name)) {
+      addedProduct.push({ name: name, value: value });
+    }
+  });
+
   // Modify the price of the added product based on quantity discount
   if (addedProduct.list_price && addedProduct.discount_quantity_percentage) {
     const listPrice = parseFloat(addedProduct.list_price);
@@ -136,15 +169,9 @@ const precartWebhookHandler = async req => {
     );
 
     if (adjustedPrice !== salePrice) {
-      if (!items) {
-      }
-      // Add a new item with adjusted price to the cart
-      const itemToModify = items.find(item => {
-        addedProduct.code === item.code;
-      });
-      itemToModify.price = adjustedPrice;
-      itemToModify._embedded["fx:item_options"].push({ name: "sale_price", value: salePrice });
-      return new Response({ headers, statusCode: 200, body: JSON.stringify(cartObject.cart_data) });
+      const item = createItemFromSkeleton(addedProduct);
+
+      return new Response({ headers, statusCode: 200, body: JSON.stringify({ item }) });
     }
   }
 
