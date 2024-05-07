@@ -123,37 +123,39 @@ const precartWebhookHandler = async req => {
   }
 
   const options = [];
-  const addedProduct = Object.entries(addedProductQuery).forEach(([name, value]) => {
-    const foxyProductOptions = [
-      "category",
-      "name",
-      "price",
-      "quantity",
-      "quantity_min",
-      "quantity_max",
-      "weight",
-      "code",
-      "parent_code",
-      "discount_name",
-      "discount",
-      "discount_quantity_percentage",
-      "discount_details",
-      "subscription_frequency",
-      "subscription_start_date",
-      "subscription_end_date",
-      "shipto",
-      "url",
-      "image",
-      "length",
-      "width",
-      "height",
-      "expires",
-    ];
+  const addedProduct = Object.fromEntries(
+    Object.entries(addedProductQuery).forEach(([name, value]) => {
+      const foxyProductOptions = [
+        "category",
+        "name",
+        "price",
+        "quantity",
+        "quantity_min",
+        "quantity_max",
+        "weight",
+        "code",
+        "parent_code",
+        "discount_name",
+        "discount",
+        "discount_quantity_percentage",
+        "discount_details",
+        "subscription_frequency",
+        "subscription_start_date",
+        "subscription_end_date",
+        "shipto",
+        "url",
+        "image",
+        "length",
+        "width",
+        "height",
+        "expires",
+      ];
 
-    if (!foxyProductOptions.includes(name)) {
-      options.push({ name: name, value: value });
-    }
-  });
+      if (!foxyProductOptions.includes(name)) {
+        options.push({ name: name, value: value });
+      }
+    })
+  );
   addedProduct.options = options;
 
   // Modify the price of the added product based on quantity discount
