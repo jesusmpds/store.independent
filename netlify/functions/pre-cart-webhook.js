@@ -123,7 +123,7 @@ const precartWebhookHandler = async req => {
   }
 
   addedProduct.options = [];
-  addedProduct.forEach(({ name, value }) => {
+  Object.entries(addedProduct).forEach(([name, value]) => {
     const foxyProductOptions = [
       "category",
       "name",
