@@ -171,6 +171,7 @@ const precartWebhookHandler = async req => {
       quantity,
       addedProduct.discount_quantity_percentage
     );
+    addedProduct.price = adjustedPrice;
 
     if (adjustedPrice !== salePrice) {
       const item = createItemFromSkeleton(addedProduct);
