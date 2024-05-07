@@ -19,7 +19,6 @@ const emptyCartBody = data => {
 };
 
 const emptyItemBody = data => {
-  // Need an empty cart to start with.
   data.item_category_uri =
     data.item_category_uri || `https://api.foxycart.com/item_categories/${data.category_id}`;
 
@@ -52,9 +51,7 @@ const emptyItemBody = data => {
   };
 };
 
-const createItemFromSkeleton = p => {
-  console.log(JSON.stringify(p));
-
+const createItemFromSkeleton = d => {
   const item = emptyItemBody({
     category_id: d.category_id,
     name: d.name,
@@ -101,8 +98,8 @@ const calculatePrice = (regularPrice, listPrice, quantity, discountDefinition) =
       for (const discount of discounts) {
         const minQty = parseInt(discount.qtyRange); // Single quantity value for this range
         if (quantity >= minQty) {
-          const discountPercentage = parseInt(discount.discountPercentage);
-          price = listPrice * (1 - discountPercentage / 100);
+          price = listPrice;
+          break;
         }
       }
     }
@@ -126,35 +123,28 @@ const precartWebhookHandler = async req => {
     headers["foxy-http-method-override"] = "POST";
   }
 
-  const newCart = emptyCartBody({
-    attributes: [],
-    items: [],
-    coupons: [],
-  });
-
   // Modify the price of the added product based on quantity discount
   if (addedProduct.list_price && addedProduct.discount_quantity_percentage) {
     const listPrice = parseFloat(addedProduct.list_price);
     const quantity = parseInt(addedProduct.quantity);
-    const price = parseInt(addedProduct.price);
+    const salePrice = parseFloat(addedProduct.price);
 
     const adjustedPrice = calculatePrice(
-      price,
+      salePrice,
       listPrice,
       quantity,
       addedProduct.discount_quantity_percentage
     );
 
-    // Add a new item with adjusted price to the cart
-    const newItem = emptyItemBody({
-      // Use emptyItemBody function to create a new item
-      name: "Adjusted Product",
-      price: adjustedPrice.toFixed(2),
-      quantity: 1, // Assuming quantity is always 1 for the new item
-    });
-    newCart._embedded["fx:items"].push(newItem);
-
-    return new Response({ headers, statusCode: 200, body: JSON.stringify(newCart) });
+    if (adjustedPrice !== salePrice) {
+      // Add a new item with adjusted price to the cart
+      const itemToModify = items.find(item => {
+        addedProduct.code === item.code;
+      });
+      itemToModify.price = adjustedPrice;
+      itemToModify._embedded["fx:item_options"].push({ name: "sale_price", value: salePrice });
+      return new Response({ headers, statusCode: 200, body: JSON.stringify(cartObject.cart_data) });
+    }
   }
 
   return new Response({ headers, statusCode: 304 });
