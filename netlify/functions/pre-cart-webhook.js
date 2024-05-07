@@ -124,7 +124,7 @@ const precartWebhookHandler = async req => {
 
   const options = [];
   const addedProduct = Object.fromEntries(
-    Object.entries(addedProductQuery).forEach(([name, value]) => {
+    Object.entries(addedProductQuery).map(([name, value]) => {
       const foxyProductOptions = [
         "category",
         "name",
@@ -154,6 +154,7 @@ const precartWebhookHandler = async req => {
       if (!foxyProductOptions.includes(name)) {
         options.push({ name: name, value: value });
       }
+      return [name, value];
     })
   );
   addedProduct.options = options;
