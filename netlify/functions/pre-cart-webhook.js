@@ -111,7 +111,7 @@ const calculatePrice = (regularPrice, listPrice, quantity, discountDefinition) =
 const precartWebhookHandler = async req => {
   const headers = { "foxy-http-method-override": "PUT" };
   const foxyReq = await req.json();
-  const addedProduct = foxyReq.query;
+  const addedProductQuery = foxyReq.query;
   let cartObject = foxyReq?.body ? JSON.parse(foxyReq.body) : null;
   console.log("addedProduct: ", addedProduct);
 
@@ -122,8 +122,8 @@ const precartWebhookHandler = async req => {
     headers["foxy-http-method-override"] = "POST";
   }
 
-  addedProduct.options = [];
-  Object.entries(addedProduct).forEach(([name, value]) => {
+  const options = [];
+  const addedProduct = Object.entries(addedProductQuery).forEach(([name, value]) => {
     const foxyProductOptions = [
       "category",
       "name",
@@ -151,9 +151,10 @@ const precartWebhookHandler = async req => {
     ];
 
     if (!foxyProductOptions.includes(name)) {
-      addedProduct.push({ name: name, value: value });
+      options.push({ name: name, value: value });
     }
   });
+  addedProduct.options = options;
 
   // Modify the price of the added product based on quantity discount
   if (addedProduct.list_price && addedProduct.discount_quantity_percentage) {
