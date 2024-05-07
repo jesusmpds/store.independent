@@ -111,15 +111,14 @@ const calculatePrice = (regularPrice, listPrice, quantity, discountDefinition) =
 const precartWebhookHandler = async req => {
   const headers = { "foxy-http-method-override": "PUT" };
   const foxyReq = await req.json();
-  console.log("FOXY REQUEST:", JSON.stringify(foxyReq));
   const addedProduct = foxyReq.query;
   let cartObject = foxyReq?.body ? JSON.parse(foxyReq.body) : null;
-  console.log("cart: ", cartObject);
+  console.log("addedProduct: ", addedProduct);
 
-  let items = cartObject.cart_data._embedded["fx:items"];
+  let items = cartObject.cart_data?._embedded["fx:items"];
   console.log("cart items: ", items);
-  if (!foxyReq?.cookies?.fcsid) {
-    console.log("No existing session, switching to a POST");
+  if (!foxyReq?.cookies?.fcsid || !items) {
+    console.log("No existing session or cart items, switching to a POST");
     headers["foxy-http-method-override"] = "POST";
   }
 
@@ -137,6 +136,8 @@ const precartWebhookHandler = async req => {
     );
 
     if (adjustedPrice !== salePrice) {
+      if (!items) {
+      }
       // Add a new item with adjusted price to the cart
       const itemToModify = items.find(item => {
         addedProduct.code === item.code;
