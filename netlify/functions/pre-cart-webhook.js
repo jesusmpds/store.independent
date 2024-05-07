@@ -113,7 +113,7 @@ const precartWebhookHandler = async req => {
   const foxyReq = await req.json();
   const addedProductQuery = foxyReq.query;
   let cartObject = foxyReq?.body ? JSON.parse(foxyReq.body) : null;
-  console.log("addedProduct: ", addedProduct);
+  console.log("addedProduct: ", addedProductQuery);
 
   let items = cartObject.cart_data?._embedded["fx:items"];
   console.log("cart items: ", items);
