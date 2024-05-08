@@ -129,6 +129,8 @@ const precartWebhookHandler = async req => {
         "width",
         "height",
         "expires",
+        "fcsid",
+        "callback",
       ];
 
       if (!foxyProductOptions.includes(name)) {
@@ -156,7 +158,7 @@ const precartWebhookHandler = async req => {
     console.log("addedProduct", addedProduct);
     if (adjustedPrice !== salePrice) {
       const item = createItemFromSkeleton(addedProduct);
-
+      console.log("item", item);
       return new Response({ headers, statusCode: 200, body: JSON.stringify({ item }) });
     }
   }
