@@ -20,7 +20,7 @@ const emptyItemBody = data => {
   return {
     name: data.name,
     price: data.price,
-    quantity: data.quantity || 1,
+    quantity: parseInt(data.quantity) || 1,
     quantity_min: data.quantity_min || 0,
     quantity_max: data.quantity_max || 0,
     weight: data.weight || "",
