@@ -1,9 +1,5 @@
 const emptyItemBody = data => {
-  data.item_category_uri =
-    data.item_category_uri || `https://api.foxycart.com/item_categories/${data.category_id}`;
-
   return {
-    item_category_uri: data.item_category_uri,
     name: data.name,
     price: data.price,
     quantity: data.quantity || 1,
@@ -159,7 +155,8 @@ const precartWebhookHandler = async req => {
     if (adjustedPrice !== salePrice) {
       const item = createItemFromSkeleton(addedProduct);
       console.log("item", item);
-      return new Response({ headers, statusCode: 200, body: JSON.stringify({ item }) });
+      items.push(item);
+      return new Response({ headers, statusCode: 200, body: JSON.stringify(cartObject.cart_data) });
     }
   }
 
