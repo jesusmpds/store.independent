@@ -1,3 +1,21 @@
+const emptyCartBody = data => {
+  // Need an empty cart to start with.
+  return {
+    _embedded: {
+      "fx:items": data.items,
+    },
+    customer_uri: null,
+    template_set_uri: null,
+    language: null,
+    locale_code: null,
+    total_item_price: null,
+    total_tax: null,
+    total_shipping: null,
+    total_future_shipping: null,
+    total_order: null,
+  };
+};
+
 const emptyItemBody = data => {
   return {
     name: data.name,
@@ -155,8 +173,10 @@ const precartWebhookHandler = async req => {
     if (adjustedPrice !== salePrice) {
       const item = createItemFromSkeleton(addedProduct);
       console.log("item", item);
-      items.push(item);
-      return new Response({ headers, statusCode: 200, body: JSON.stringify(cartObject.cart_data) });
+
+      const newCart = emptyCartBody({ items: [...items, item] });
+
+      return new Response({ headers, statusCode: 200, body: JSON.stringify(newCart) });
     }
   }
 
