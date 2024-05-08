@@ -1,23 +1,3 @@
-const emptyCartBody = data => {
-  // Need an empty cart to start with.
-  return {
-    _embedded: {
-      "fx:attributes": data.attributes,
-      "fx:items": data.items,
-      "fx:applied_coupon_codes": data.coupons,
-    },
-    customer_uri: null,
-    template_set_uri: null,
-    language: null,
-    locale_code: null,
-    total_item_price: null,
-    total_tax: null,
-    total_shipping: null,
-    total_future_shipping: null,
-    total_order: null,
-  };
-};
-
 const emptyItemBody = data => {
   data.item_category_uri =
     data.item_category_uri || `https://api.foxycart.com/item_categories/${data.category_id}`;
@@ -113,10 +93,10 @@ const precartWebhookHandler = async req => {
   const foxyReq = await req.json();
   const addedProductQuery = foxyReq.query;
   let cartObject = foxyReq?.body ? JSON.parse(foxyReq.body) : null;
-  console.log("addedProduct: ", addedProductQuery);
+  console.log("addedProductQueryaddedProductQuery: ", addedProductQuery);
 
   let items = cartObject.cart_data?._embedded["fx:items"];
-  console.log("cart items: ", items);
+
   if (!foxyReq?.cookies?.fcsid || !items) {
     console.log("No existing session or cart items, switching to a POST");
     headers["foxy-http-method-override"] = "POST";
@@ -173,6 +153,7 @@ const precartWebhookHandler = async req => {
     );
     addedProduct.price = adjustedPrice;
 
+    console.log("addedProduct", addedProduct);
     if (adjustedPrice !== salePrice) {
       const item = createItemFromSkeleton(addedProduct);
 
