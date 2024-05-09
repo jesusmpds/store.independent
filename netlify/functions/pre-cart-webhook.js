@@ -193,7 +193,7 @@ const precartWebhookHandler = async req => {
 
       const newCart = emptyCartBody({ items: [...items, item] });
       console.log("ADDED CART", JSON.stringify(newCart, null, 2));
-      return {body: JSON.stringify(newCart),  headers, status: 200 }};
+      return { body: JSON.stringify(newCart), headers, status: 200 };
     }
   }
 
