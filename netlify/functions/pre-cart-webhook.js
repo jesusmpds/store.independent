@@ -119,7 +119,7 @@ const precartWebhookHandler = async req => {
 
   if (addedProductQuery.cart === "update" && addedProductQuery["1:quantity"] === "0") {
     console.log("Responded early, this was a product removal.");
-    return new Response({ headers, statusCode: 304 });
+    return new Response(null, { headers, status: 304 });
   }
 
   let items = cartObject.cart_data?._embedded["fx:items"];
@@ -191,10 +191,8 @@ const precartWebhookHandler = async req => {
 
       const newCart = emptyCartBody({ items: [...items, item] });
 
-      return new Response({
-        headers,
-        statusCode: 200,
-        body: JSON.stringify({
+      return new Response(
+        JSON.stringify({
           _embedded: {
             "fx:items": [
               {
@@ -230,11 +228,12 @@ const precartWebhookHandler = async req => {
           total_future_shipping: null,
           total_order: null,
         }),
-      });
+        { headers, status: 200 }
+      );
     }
   }
 
-  return new Response({ headers, statusCode: 304 });
+  return new Response(null, { headers, status: 304 });
 };
 
 export default async (req, context) => {
