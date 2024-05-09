@@ -30,7 +30,7 @@ const emptyItemBody = data => {
     quantity_min: data.quantity_min || 0,
     quantity_max: data.quantity_max || 0,
     weight: data.weight || "",
-    code: data.item,
+    code: data.code,
     parent_code: data.parent_code || "",
     discount_name: data.discount_name || "",
     discount_type: data.discount_type || "",
