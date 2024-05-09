@@ -191,45 +191,7 @@ const precartWebhookHandler = async req => {
 
       const newCart = emptyCartBody({ items: [...items, item] });
 
-      return new Response(
-        JSON.stringify({
-          _embedded: {
-            "fx:items": [
-              {
-                item_category_uri: `https://api.foxycart.test/item_categories/${defaultCategoryID}`,
-                name: "testatv",
-                price: "14.05",
-                quantity: 1,
-                quantity_min: 0,
-                quantity_max: 0,
-                weight: 4,
-                code: "xyz456",
-                parent_code: "",
-                discount_name: "",
-                discount_type: "",
-                discount_details: "",
-                shipto: "",
-                url: "",
-                image: "",
-                length: 0,
-                width: 0,
-                height: 0,
-                expires: 0,
-              },
-            ],
-          },
-          customer_uri: "",
-          template_set_uri: "",
-          language: null,
-          locale_code: null,
-          total_item_price: null,
-          total_tax: null,
-          total_shipping: null,
-          total_future_shipping: null,
-          total_order: null,
-        }),
-        { headers, status: 200 }
-      );
+      return new Response(JSON.stringify(newCart), { headers, status: 200 });
     }
   }
 
