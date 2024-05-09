@@ -115,6 +115,7 @@ const precartWebhookHandler = async req => {
     console.log("No existing session or cart items, switching to a POST");
     headers["foxy-http-method-override"] = "POST";
     cartObject.cart_data._embedded["fx:items"] = [];
+    items = cartObject.cart_data?._embedded["fx:items"];
   }
 
   const options = [];
