@@ -77,7 +77,7 @@ const createItemFromSkeleton = d => {
     height: d.height,
     expires: d.expires,
   });
-  item._embedded["fx:item_options"] = [...d.options];
+  item._embedded["fx:item_options"] = d.options ? [...d.options] : d._embedded["fx:item_options"];
   return item;
 };
 
