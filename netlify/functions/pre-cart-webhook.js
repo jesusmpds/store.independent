@@ -9,6 +9,7 @@ const emptyCartBody = data => {
     },
     customer_uri: null,
     template_set_uri: null,
+    payment_method_uri: null,
     language: null,
     locale_code: null,
     total_item_price: null,
@@ -167,7 +168,7 @@ const precartWebhookHandler = async req => {
     })
   );
   addedProduct.options = options;
-
+  console.log("options", options);
   // Modify the price of the added product based on quantity discount
   if (addedProduct.list_price && addedProduct.discount_quantity_percentage) {
     const listPrice = parseFloat(addedProduct.list_price);
