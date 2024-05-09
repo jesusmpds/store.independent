@@ -1,9 +1,13 @@
+const defaultCategoryID = "149466";
+
 const emptyCartBody = data => {
   // Need an empty cart to start with.
   return {
     _embedded: {
       "fx:items": data.items,
+      "fx:custom_fields": data.custom_fields,
     },
+
     customer_uri: null,
     template_set_uri: null,
     language: null,
@@ -17,7 +21,10 @@ const emptyCartBody = data => {
 };
 
 const emptyItemBody = data => {
+  data.item_category_uri =
+    data.item_category_uri || `https://api.foxycart.com/item_categories/${defaultCategoryID}`;
   return {
+    item_category_uri: data.item_category_uri,
     name: data.name,
     price: data.price,
     quantity: parseInt(data.quantity) || 1,
