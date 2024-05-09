@@ -191,7 +191,68 @@ const precartWebhookHandler = async req => {
 
       const newCart = emptyCartBody({ items: [...items, item] });
 
-      return new Response({ headers, statusCode: 200, body: JSON.stringify(newCart) });
+      return new Response({
+        headers,
+        statusCode: 200,
+        body: JSON.stringify({
+          _embedded: {
+            "fx:items": [
+              {
+                item_category_uri: `https://api.foxycart.test/item_categories/${defaultCategoryID}`,
+                name: "testatv",
+                price: "14.05",
+                quantity: 1,
+                quantity_min: 0,
+                quantity_max: 0,
+                weight: 4,
+                code: "xyz456",
+                parent_code: "",
+                discount_name: "",
+                discount_type: "",
+                discount_details: "",
+                shipto: "",
+                url: "",
+                image: "",
+                length: 0,
+                width: 0,
+                height: 0,
+                expires: 0,
+              },
+            ],
+          },
+          customer_uri: "https://api.foxycart.test/customers/<saved-customers-id>",
+          payment_method_uri: "https://api.foxycart.test/transactions/<transaction-id>/payments",
+          template_set_uri: "https://api.foxycart.test/template_sets/<templateset-id>",
+          language: null,
+          use_customer_shipping_address: true,
+          billing_first_name: "Filip",
+          billing_last_name: "Cujanovic",
+          billing_company: "",
+          billing_address1: "Test",
+          billing_address2: "",
+          billing_city: "MANHATTAN",
+          billing_state: "NY",
+          billing_postal_code: "10001",
+          billing_country: "US",
+          billing_phone: "",
+          shipping_first_name: "Filip",
+          shipping_last_name: "Cujanovic",
+          shipping_company: "",
+          shipping_address1: "Test",
+          shipping_address2: "",
+          shipping_city: "Seal beach",
+          shipping_state: "TX",
+          shipping_postal_code: "78767",
+          shipping_country: "US",
+          shipping_phone: "",
+          locale_code: null,
+          total_item_price: null,
+          total_tax: null,
+          total_shipping: null,
+          total_future_shipping: null,
+          total_order: null,
+        }),
+      });
     }
   }
 
