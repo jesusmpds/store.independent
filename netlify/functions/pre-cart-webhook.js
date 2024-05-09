@@ -5,9 +5,8 @@ const emptyCartBody = data => {
   return {
     _embedded: {
       "fx:items": data.items,
-      "fx:custom_fields": data.custom_fields,
+      // "fx:custom_fields": data.custom_fields,
     },
-
     customer_uri: null,
     template_set_uri: null,
     language: null,
