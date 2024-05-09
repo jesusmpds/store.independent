@@ -116,6 +116,12 @@ const precartWebhookHandler = async req => {
   let cartObject = foxyReq?.body ? JSON.parse(foxyReq.body) : null;
   console.log("addedProductQuery: ", addedProductQuery);
   console.log("cartObject", cartObject);
+
+  if (addedProductQuery.cart === "update" && addedProductQuery["1:quantity"] === "0") {
+    console.log("Responded early, this was a product removal.");
+    return new Response({ headers, statusCode: 304 });
+  }
+
   let items = cartObject.cart_data?._embedded["fx:items"];
   console.log("CURRENT ITEMS IN CART", items);
   if (!foxyReq?.cookies?.fcsid || !items) {
