@@ -114,7 +114,6 @@ const precartWebhookHandler = async req => {
   const addedProductQuery = foxyReq.query;
   let cartObject = foxyReq?.body ? JSON.parse(foxyReq.body) : null;
   console.log("addedProductQuery: ", addedProductQuery);
-  console.log("cartObject", cartObject);
 
   if (addedProductQuery.cart === "update" && addedProductQuery["1:quantity"] === "0") {
     console.log("Responded early, this was a product removal.");
@@ -122,7 +121,7 @@ const precartWebhookHandler = async req => {
   }
 
   let items = cartObject.cart_data?._embedded["fx:items"];
-  console.log("CURRENT ITEMS IN CART", items);
+
   if (!foxyReq?.cookies?.fcsid || !items) {
     console.log("No existing session or cart items, switching to a POST");
     headers["foxy-http-method-override"] = "POST";
@@ -183,14 +182,13 @@ const precartWebhookHandler = async req => {
     );
     addedProduct.price = adjustedPrice;
 
-    console.log("addedProduct", addedProduct);
     if (adjustedPrice !== salePrice) {
       const item = createItemFromSkeleton(addedProduct);
       console.log("item", item);
 
       const newCart = emptyCartBody({ items: [...items, item] });
-
-      return new Response(JSON.stringify(item), { headers, status: 200 });
+      console.log(newCart, newCart);
+      return new Response(JSON.stringify(newCart), { headers, status: 200 });
     }
   }
 
