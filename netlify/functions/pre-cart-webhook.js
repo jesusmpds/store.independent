@@ -195,11 +195,11 @@ const precartWebhookHandler = async req => {
         items: [...items.map(item => createItemFromSkeleton(item)), item],
       });
       console.log("ADDED CART", JSON.stringify(newCart, null, 2));
-      return new Response(JSON.stringify(newCart), { headers, status: 200 });
+      return Response.json(newCart, { headers, status: 200 });
     }
   }
 
-  return new Response(null, { headers, status: 304 });
+  return Response.json(null, { headers, status: 304 });
 };
 
 export default async (req, context) => {
