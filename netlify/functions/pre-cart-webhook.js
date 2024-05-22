@@ -199,7 +199,7 @@ const precartWebhookHandler = async req => {
     }
   }
 
-  return Response.json(null, { headers, status: 304 });
+  return Response.json({ status: 304 });
 };
 
 export default async (req, context) => {
