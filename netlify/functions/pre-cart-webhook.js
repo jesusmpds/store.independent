@@ -52,6 +52,21 @@ const emptyItemBody = data => {
   };
 };
 
+const removeLinksProperty = obj => {
+  // Check if the object has a _links property and delete it
+  if (obj.hasOwnProperty("_links")) {
+    delete obj["_links"];
+  }
+
+  // Iterate over the object's properties
+  for (let key in obj) {
+    if (obj.hasOwnProperty(key) && typeof obj[key] === "object" && obj[key] !== null) {
+      // Recursively call removeLinksProperty on nested objects
+      removeLinksProperty(obj[key]);
+    }
+  }
+};
+
 const createItemFromSkeleton = d => {
   const item = emptyItemBody({
     category: d.category,
@@ -77,9 +92,12 @@ const createItemFromSkeleton = d => {
     height: d.height,
     expires: d.expires,
   });
-  item._embedded["fx:item_options"] = d.options ? [...d.options] : d._embedded["fx:item_options"];
-  if (item._embedded["fx:item_options"].hasOwnProperty("_links"))
-    delete item._embedded["fx:item_options"].links;
+
+  // Copy item options and remove _links property
+  const itemOptions = d.options ? [...d.options] : d._embedded["fx:item_options"];
+  itemOptions.forEach(option => removeLinksProperty(option));
+
+  item._embedded["fx:item_options"] = itemOptions;
   return item;
 };
 
