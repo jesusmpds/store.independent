@@ -78,7 +78,7 @@ const createItemFromSkeleton = d => {
     expires: d.expires,
   });
   item._embedded["fx:item_options"] = d.options ? [...d.options] : d._embedded["fx:item_options"];
-  if (item._embedded["fx:item_options"].hasOwn("_links"))
+  if (item._embedded["fx:item_options"].hasOwnProperty("_links"))
     delete item._embedded["fx:item_options"].links;
   return item;
 };
