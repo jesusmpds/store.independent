@@ -78,6 +78,8 @@ const createItemFromSkeleton = d => {
     expires: d.expires,
   });
   item._embedded["fx:item_options"] = d.options ? [...d.options] : d._embedded["fx:item_options"];
+  if (item._embedded["fx:item_options"].hasOwn("_links"))
+    delete item._embedded["fx:item_options"].links;
   return item;
 };
 
@@ -173,6 +175,7 @@ const precartWebhookHandler = async req => {
   );
   addedProduct.options = options;
   console.log("options", options);
+
   // Modify the price of the added product based on quantity discount
   if (addedProduct.list_price && addedProduct.discount_quantity_percentage) {
     const listPrice = parseFloat(addedProduct.list_price);
