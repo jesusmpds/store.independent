@@ -141,7 +141,7 @@ const precartWebhookHandler = async req => {
     return new Response(null, { headers, status: 304 });
   }
 
-  if (addedProductQuery.length === 1 && addedProductQuery["fcsid"]) {
+  if (Object.keys(addedProductQuery).length === 1 && addedProductQuery["fcsid"]) {
     console.log("Responded early, this was a get request with just the fcsid.");
     return new Response(null, { headers, status: 304 });
   }
