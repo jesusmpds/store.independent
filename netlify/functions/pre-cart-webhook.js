@@ -126,7 +126,7 @@ const calculatePrice = (regularPrice, listPrice, quantity, discountDefinition) =
     }
   }
 
-  return price;
+  return Number(price);
 };
 
 const precartWebhookHandler = async req => {
@@ -138,6 +138,11 @@ const precartWebhookHandler = async req => {
 
   if (addedProductQuery.cart === "update" && addedProductQuery["1:quantity"] === "0") {
     console.log("Responded early, this was a product removal.");
+    return new Response(null, { headers, status: 304 });
+  }
+
+  if (addedProductQuery.length === 1 && addedProductQuery["fcsid"]) {
+    console.log("Responded early, this was a get request with just the fcsid.");
     return new Response(null, { headers, status: 304 });
   }
 
@@ -206,9 +211,9 @@ const precartWebhookHandler = async req => {
       quantity,
       addedProduct.discount_quantity_percentage
     );
-    addedProduct.price = adjustedPrice;
 
     if (adjustedPrice !== salePrice) {
+      addedProduct.price = adjustedPrice;
       const item = createItemFromSkeleton(addedProduct);
       console.log("item", item);
 
