@@ -139,7 +139,7 @@ const validateJSON = obj => {
   }
 };
 
-const createResponse = body => {
+const createResponse = (body, headers) => {
   const utf8Body = Buffer.from(JSON.stringify(body), "utf8");
   return {
     headers: {
@@ -265,7 +265,7 @@ exports.handler = async (req, context) => {
         return { statusCode: 500, body: JSON.stringify({ error: "Invalid JSON structure" }) };
       }
 
-      return createResponse(newCart);
+      return createResponse(newCart, headers);
     }
   }
 
