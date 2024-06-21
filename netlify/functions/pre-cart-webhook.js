@@ -131,7 +131,10 @@ const calculatePrice = (regularPrice, listPrice, quantity, discountDefinition) =
 
 const precartWebhookHandler = req => {
   let items;
-  const headers = { "foxy-http-method-override": "PUT" };
+  const headers = {
+    "foxy-http-method-override": "PUT",
+    "Content-Type": "application/json; charset=utf-8",
+  };
 
   let requestBody = req?.body ? JSON.parse(req.body) : null;
   const addedProductQuery = requestBody.query;
