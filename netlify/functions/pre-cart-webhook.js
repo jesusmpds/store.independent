@@ -129,7 +129,7 @@ const calculatePrice = (regularPrice, listPrice, quantity, discountDefinition) =
   return Number(price);
 };
 
-const precartWebhookHandler = async req => {
+const precartWebhookHandler = req => {
   let items;
   const headers = { "foxy-http-method-override": "PUT" };
 
@@ -241,5 +241,5 @@ const precartWebhookHandler = async req => {
 };
 
 exports.handler = async (req, context) => {
-  return await precartWebhookHandler(req);
+  return precartWebhookHandler(req);
 };
