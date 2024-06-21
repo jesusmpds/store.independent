@@ -241,5 +241,5 @@ const precartWebhookHandler = async req => {
 };
 
 exports.handler = async (req, context) => {
-  return precartWebhookHandler(req);
+  return await precartWebhookHandler(req);
 };
