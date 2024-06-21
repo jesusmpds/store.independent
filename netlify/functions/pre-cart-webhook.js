@@ -132,11 +132,11 @@ const calculatePrice = (regularPrice, listPrice, quantity, discountDefinition) =
 const precartWebhookHandler = async req => {
   const headers = { "foxy-http-method-override": "PUT" };
   console.log("REQUEST", req);
-  const addedProductQuery = req.query;
+  const addedProductQuery = req.queryStringParameters;
   let cartObject = req?.body ? JSON.parse(req.body) : null;
   console.log("addedProductQuery: ", addedProductQuery);
 
-  if (addedProductQuery.cart === "update" && addedProductQuery["1:quantity"] === "0") {
+  if (addedProductQuery?.cart === "update" && addedProductQuery["1:quantity"] === "0") {
     console.log("Responded early, this was a product removal.");
     return { headers, statusCode: 304 };
   }
@@ -148,7 +148,7 @@ const precartWebhookHandler = async req => {
 
   let items = cartObject.cart_data._embedded?.["fx:items"];
   console.log("CART DATA", cartObject.cart_data);
-  if (!req?.cookies?.fcsid || !items) {
+  if (!req.headers.cookie?.fcsid || !items) {
     console.log("No existing session or cart items, switching to a POST");
     headers["foxy-http-method-override"] = "POST";
 
