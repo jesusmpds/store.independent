@@ -130,9 +130,11 @@ const calculatePrice = (regularPrice, listPrice, quantity, discountDefinition) =
 };
 
 const precartWebhookHandler = async req => {
+  let items;
   const headers = { "foxy-http-method-override": "PUT" };
-  const addedProductQuery = req.queryStringParameters;
-  let cartObject = req?.body ? JSON.parse(req.body) : null;
+
+  let requestBody = req?.body ? JSON.parse(req.body) : null;
+  const addedProductQuery = requestBody.query;
   console.log("addedProductQuery: ", addedProductQuery);
 
   if (addedProductQuery?.cart === "update" && addedProductQuery["1:quantity"] === "0") {
@@ -145,17 +147,19 @@ const precartWebhookHandler = async req => {
     return { headers, statusCode: 304 };
   }
   console.log("CART DATA", cartObject);
-  let items = cartObject.cart_data._embedded?.["fx:items"];
+  let cart_data = JSON.parse(requestBody).cart_data;
 
-  if (!req.headers.cookie?.fcsid || !items) {
+  const hasNoItems = !cart_data.length;
+
+  if (!requestBody.cookies.fcsid || !cart_data.length) {
     console.log("No existing session or cart items, switching to a POST");
     headers["foxy-http-method-override"] = "POST";
 
-    if (!cartObject.cart_data.length) {
-      cartObject.cart_data = { _embedded: { "fx:items": [] } };
+    if (!cart_data.length) {
+      cart_data = { _embedded: { "fx:items": [] } };
     }
 
-    items = cartObject.cart_data?._embedded?.["fx:items"];
+    items = cart_data?._embedded?.["fx:items"];
   }
 
   const options = [];
@@ -214,11 +218,19 @@ const precartWebhookHandler = async req => {
     if (adjustedPrice !== salePrice) {
       addedProduct.price = adjustedPrice;
       const item = createItemFromSkeleton(addedProduct);
+      let newCart;
       console.log("item", item);
 
-      const newCart = emptyCartBody({
-        items: [...items.map(item => createItemFromSkeleton(item)), item],
-      });
+      if (hasNoItems) {
+        newCart = emptyCartBody({
+          items: [item],
+        });
+      } else {
+        newCart = emptyCartBody({
+          items: [...items.map(item => createItemFromSkeleton(item)), item],
+        });
+      }
+
       console.log("ADDED CART", JSON.stringify(newCart, null, 2));
       return { body: JSON.stringify(newCart), headers, statusCode: 200 };
     }
