@@ -146,8 +146,9 @@ const precartWebhookHandler = async req => {
     console.log("Responded early, this was a get request with just the fcsid.");
     return { headers, statusCode: 304 };
   }
-  console.log("CART DATA", cartObject);
+
   let cart_data = JSON.parse(requestBody).cart_data;
+  console.log("CART DATA", cart_data);
 
   const hasNoItems = !cart_data.length;
 
