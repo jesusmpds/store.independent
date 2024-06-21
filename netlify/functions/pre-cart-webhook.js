@@ -144,7 +144,7 @@ const precartWebhookHandler = async req => {
     console.log("Responded early, this was a get request with just the fcsid.");
     return { headers, statusCode: 304 };
   }
-  console.log("CART DATA", cartObject.cart_data);
+  console.log("CART DATA", cartObject);
   let items = cartObject.cart_data._embedded?.["fx:items"];
 
   if (!req.headers.cookie?.fcsid || !items) {
