@@ -138,12 +138,12 @@ const precartWebhookHandler = async req => {
 
   if (addedProductQuery.cart === "update" && addedProductQuery["1:quantity"] === "0") {
     console.log("Responded early, this was a product removal.");
-    return new Response(null, { headers, status: 304 });
+    return { headers, statusCode: 304 };
   }
 
   if (Object.keys(addedProductQuery).length === 1 && addedProductQuery["fcsid"]) {
     console.log("Responded early, this was a get request with just the fcsid.");
-    return new Response(null, { headers, status: 304 });
+    return { headers, statusCode: 304 };
   }
 
   let items = cartObject.cart_data._embedded?.["fx:items"];
@@ -221,13 +221,13 @@ const precartWebhookHandler = async req => {
         items: [...items.map(item => createItemFromSkeleton(item)), item],
       });
       console.log("ADDED CART", JSON.stringify(newCart, null, 2));
-      return Response.json({ body: JSON.stringify(newCart), headers, status: 200 });
+      return { body: JSON.stringify(newCart), headers, statusCode: 200 };
     }
   }
 
-  return Response.json({ status: 304 });
+  return { statusCode: 304 };
 };
 
-export default async (req, context) => {
+exports.handler = async (req, context) => {
   return precartWebhookHandler(req);
 };
