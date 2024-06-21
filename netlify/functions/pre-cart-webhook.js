@@ -131,9 +131,8 @@ const calculatePrice = (regularPrice, listPrice, quantity, discountDefinition) =
 
 const precartWebhookHandler = async req => {
   const headers = { "foxy-http-method-override": "PUT" };
-  const foxyReq = await req.json();
   const addedProductQuery = foxyReq.query;
-  let cartObject = foxyReq?.body ? JSON.parse(foxyReq.body) : null;
+  let cartObject = req?.body ? JSON.parse(req.body) : null;
   console.log("addedProductQuery: ", addedProductQuery);
 
   if (addedProductQuery.cart === "update" && addedProductQuery["1:quantity"] === "0") {
