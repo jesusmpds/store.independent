@@ -129,7 +129,29 @@ const calculatePrice = (regularPrice, listPrice, quantity, discountDefinition) =
   return Number(price);
 };
 
-const precartWebhookHandler = req => {
+const validateJSON = obj => {
+  try {
+    JSON.stringify(obj);
+    return true;
+  } catch (e) {
+    console.error("Invalid JSON structure: ", e);
+    return false;
+  }
+};
+
+const createResponse = body => {
+  const utf8Body = Buffer.from(JSON.stringify(body), "utf8");
+  return {
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "foxy-http-method-override": headers["foxy-http-method-override"],
+    },
+    statusCode: 200,
+    body: utf8Body.toString(),
+  };
+};
+
+exports.handler = async (req, context) => {
   let items;
   const headers = {
     "foxy-http-method-override": "PUT",
@@ -236,13 +258,16 @@ const precartWebhookHandler = req => {
       }
 
       console.log("ADDED CART", JSON.stringify(newCart, null, 2));
-      return { body: JSON.stringify(newCart), headers, statusCode: 200 };
+
+      // Validate and encode the response
+      if (!validateJSON(newCart)) {
+        console.log("Invalid JSON structure");
+        return { statusCode: 500, body: JSON.stringify({ error: "Invalid JSON structure" }) };
+      }
+
+      return createResponse(newCart);
     }
   }
 
   return { statusCode: 304 };
-};
-
-exports.handler = async (req, context) => {
-  return precartWebhookHandler(req);
 };
