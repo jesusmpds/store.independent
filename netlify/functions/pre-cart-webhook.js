@@ -147,7 +147,7 @@ const precartWebhookHandler = async req => {
     return { headers, statusCode: 304 };
   }
 
-  let cart_data = JSON.parse(requestBody).cart_data;
+  let cart_data = JSON.parse(requestBody.body).cart_data;
   console.log("CART DATA", cart_data);
 
   const hasNoItems = !cart_data.length;
